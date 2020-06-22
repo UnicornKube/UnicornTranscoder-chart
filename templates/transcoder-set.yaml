@@ -14,7 +14,7 @@ spec:
   selector:
     matchLabels:
       {{- include "unicorn-plex.transcoderSelectorLabels" . | nindent 6 }}
-  serviceName: "unicorn-transcoder"
+  serviceName: "{{ $fullname }}-transcoder"
   template:
     metadata:
       labels:
@@ -57,11 +57,11 @@ spec:
             - name: SERVER_PORT
               value: "3000"
             - name: SERVER_HOST
-              value: "{{ $fullname }}-transcode.$(POD_NAME)"
+              value: "$(POD_NAME).{{ $fullname }}-transcoder.deafult.svc.cluster.local"
             - name: LOADBALANCER_ADDRESS
               value: {{ include "unicorn-plex.lb-url" . | trimSuffix "/" | quote }}
             - name: INSTANCE_ADDRESS
-              value: {{ include "unicorn-plex.transcoder-url" . }}
+              value: "$(SERVER_HOST)"
             - name:  PLEX_TOKEN
               valueFrom:
                 secretKeyRef:
