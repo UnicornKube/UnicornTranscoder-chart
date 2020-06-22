@@ -28,7 +28,7 @@ spec:
       targetPort: dnla-server2
       protocol: TCP
   selector:
-    unicorn-trancoder: loadbalancer
+    unicorn-transcoder: loadbalancer
 ---
 apiVersion: v1
 kind: Service
@@ -68,4 +68,4 @@ spec:
       targetPort: plex-gdm4
       protocol: UDP
   selector:
-    unicorn-trancoder: loadbalancer
+    unicorn-transcoder: loadbalancer

@@ -29,5 +29,5 @@ spec:
           - path: /
             backend:
               serviceName: {{ include "unicorn-plex.fullname" . }}
-              servicePort: {{ .Values.service.port }}
+              servicePort: lb-port
 {{- end }}
