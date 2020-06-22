@@ -1,4 +1,4 @@
-{{- if .Values.transcoding.hpa }}
+{{- if .Values.transcoding.hpa.enabled }}
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
@@ -11,6 +11,6 @@ spec:
     kind: StatefulSet
     name: {{ include "unicorn-plex.name" . }}-transcoder
   minReplicas: {{ .Values.transcoding.replicas }}
-  maxReplicas: {{ .Values.transcoding.maxReplicas }}
-  targetCPUUtilizationPercentage: {{ .Values.transcoding.hpaCPUPercent }}
+  maxReplicas: {{ .Values.transcoding.hpa.maxReplicas }}
+  targetCPUUtilizationPercentage: {{ .Values.transcoding.hpa.CPUPercent }}
 {{- end }}

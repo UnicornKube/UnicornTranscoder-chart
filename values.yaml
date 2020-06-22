@@ -61,15 +61,16 @@ plexGID: 100
 
 # Transcoding Pods Configuration
 transcoding:
-  # transcoding.hpa -- (bool) Determine if chart should deploy a Horizontal Pod Autoscaler for the UnicornTranscoders
-  hpa: true
-  # transcoding.hpaCPUPercent -- (int) Percentage of requested CPUs over all UnicornTranscoder Pods for the to be utilized before a new UnicornTranscoder pod is created
-  hpaCPUPercent: 50
+  hpa:
+    # transcoding.hpa.enabled -- (bool) Determine if chart should deploy a Horizontal Pod Autoscaler for the UnicornTranscoders
+    enabled: true
+    # transcoding.hpa.CPUPercent -- (int) Percentage of requested CPUs over all UnicornTranscoder Pods for the to be utilized before a new UnicornTranscoder pod is created
+    CPUPercent: 50
+    # transcoding.maxReplicas -- (int) Maximum number of replicas to be created by the HPA
+    # Note: This is ignored if transcoding.hpa is set to false
+    maxReplicas: 16
   # transcoding.replicas -- (int) Number of replicas to be created by the Transcoder StatefulSet
-  replicas: 4
-  # transcoding.maxReplicas -- (int) Maximum number of replicas to be created by the HPA
-  # Note: This is ignored if transcoding.hpa is set to false
-  maxReplicas: 16
+  replicas: 2
   # transcoding.port -- (int) Port to be used by the created transcoding services
   port: 443
   # transcode.transcodeDomain -- Domain to be used as the base for the FQDN of the transcoders
@@ -185,7 +186,9 @@ ingress:
     # ingress.tls.host -- Domain name to use on the TLS Certifcate
     host: plex.jeansburger.net
     # ingress.tls.secretName -- Name of secret to hold TLS Certifcate
-    secretName: plex-tls
+    secret:
+      enabled: true
+      name: plex-tls
   # secretName:
   #  - secretName: chart-example-tls
   #    hosts:
@@ -231,3 +234,6 @@ tolerations:
 affinity:
   unicornLoadbalancer: {}
   unicornTranscoder: {}
+
+networkingPolicy:
+  enabled: true
