@@ -122,7 +122,7 @@ data:
     # subPath:
 
   transcoding:
-    # data.transcoding.claimName -- Name of already existing PVC to be used by the trancoders to use while transcoding media
+    # data.transcoding.claimName -- Name of already existing PVC to be used by the transcoders to use while transcoding media
     # If claimName is defined then the storage class and size are ignored
     # Claim must be fore a ReadWriteMany PVC
     claimName:

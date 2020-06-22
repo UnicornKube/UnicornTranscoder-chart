@@ -29,7 +29,7 @@ Source code can be found [here](https://github.com/Unicorn-K8s/UnicornTrancoder-
 | data.plexMedia.accessMode | string | `"ReadWriteOnce"` |  |
 | data.plexMedia.claimName | string | `"tv-movies-pvc"` | Name of already existing PVC that holds all of the media for Plex If claimName is defined then the storage class and size are ignored |
 | data.plexMedia.size | string | `"100Gi"` | Size of the created PVC If claimName is defined then this is ignored |
-| data.transcoding.claimName | string | `nil` | Name of already existing PVC to be used by the trancoders to use while transcoding media If claimName is defined then the storage class and size are ignored Claim must be fore a ReadWriteMany PVC |
+| data.transcoding.claimName | string | `nil` | Name of already existing PVC to be used by the transcoders to use while transcoding media If claimName is defined then the storage class and size are ignored Claim must be fore a ReadWriteMany PVC |
 | data.transcoding.size | string | `"120Gi"` | Size of the created PVC If claimName is defined then this is ignored |
 | data.transcoding.storageClass | string | `"hostpath"` | Name of Storage Class to use to create the transcoding PVC |
 | imagePullSecrets | list | `[]` |  |
