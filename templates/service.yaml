@@ -9,7 +9,8 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  type: {{ .Values.service.type }}
+  type: ClusterIP
+  clusterIP: None
   ports:
     - name: transcode-port
       port: 3000
