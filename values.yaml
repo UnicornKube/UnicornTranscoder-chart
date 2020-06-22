@@ -90,6 +90,8 @@ data:
     # data.plexConfig.size -- Size of the created PVC
     # If claimName is defined then this is ignored
     size: 60Gi
+    # data.plexConfig.subPath -- The subpath on the PVC where the plex config is stored
+    # subPath:
 
   plexDB:
     # data.plexDB.claimName -- Name of already existing PVC used as long term storage for the Plex SQLite Database
@@ -102,6 +104,8 @@ data:
     # data.plexDB.size -- Size of the created PVC
     # If claimName is defined then this is ignored
     size: 10Gi
+    # data.plexDB.subPath -- The subpath on the PVC where the plex DB is stored
+    # subPath:
 
   plexMedia:
     # data.plexMedia.claimName -- Name of already existing PVC that holds all of the media for Plex
@@ -114,6 +118,8 @@ data:
     # data.plexMedia.size -- Size of the created PVC
     # If claimName is defined then this is ignored
     size: 100Gi
+    # data.plexMedia.subPath -- The subpath on the PVC where the media is stored
+    # subPath:
 
   transcoding:
     # data.transcoding.claimName -- Name of already existing PVC to be used by the trancoders to use while transcoding media
@@ -125,6 +131,8 @@ data:
     # data.transcoding.size -- Size of the created PVC
     # If claimName is defined then this is ignored
     size: 120Gi
+    # data.transcoding.subPath -- The subpath on the PVC where transcoding is stored
+    # subPath:
 
 imagePullSecrets: []
 ## nameOverride: ""
@@ -167,27 +175,27 @@ ingress:
   # ingress.enabled -- Use Kubernetes Ingress to access plex
   enabled: true
   # ingress.annotations -- Any annotations to add to the Plex Ingress
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    kubernetes.io/tls-acme: "true"
-    cert-manager.io/cluster-issuer: letsencrypt-prod
-    nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
-    nginx.ingress.kubernetes.io/proxy-buffering: "off"
-    nginx.ingress.kubernetes.io/upstream-vhost: "localhost"
-    nginx.ingress.kubernetes.io/proxy-redirect-from: "http://localhost$request_uri"
-    nginx.ingress.kubernetes.io/proxy-redirect-to: "$scheme://plex.mydomain.tld$request_uri"
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      more_set_input_headers "Referer: localhost" ;
-      more_set_input_headers "Origin: localhost" ;
+  annotations: {}
+    #kubernetes.io/ingress.class: nginx
+    #kubernetes.io/tls-acme: "true"
+    #cert-manager.io/cluster-issuer: letsencrypt-prod
+    #nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
+    #nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    #nginx.ingress.kubernetes.io/upstream-vhost: "localhost"
+    #nginx.ingress.kubernetes.io/proxy-redirect-from: "http://localhost$request_uri"
+    #nginx.ingress.kubernetes.io/proxy-redirect-to: "$scheme://plex.mydomain.tld$request_uri"
+    #nginx.ingress.kubernetes.io/configuration-snippet: |
+    #  more_set_input_headers "Referer: localhost" ;
+    #  more_set_input_headers "Origin: localhost" ;
 
   # ingress.host -- Domain name to use for ingress to plex
   host: plex.jeansburger.net
   tls:
     # ingress.tls.host -- Domain name to use on the TLS Certifcate
     host: plex.jeansburger.net
-    # ingress.tls.secretName -- Name of secret to hold TLS Certifcate
     secret:
       enabled: true
+      # ingress.tls.secret.name -- Name of secret to hold TLS Certifcate
       name: plex-tls
   # secretName:
   #  - secretName: chart-example-tls

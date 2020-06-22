@@ -95,7 +95,7 @@ UnicornTranscoder Loadbalancer Labels
 */}}
 {{- define "unicorn-plex.loadbalancerSelectorLabels" -}}
 {{ include "unicorn-plex.selectorLabels" . }}
-unicorn-trancoder: loadbalancer
+unicorn-transcoder: loadbalancer
 {{- end -}}
 
 {{/*
@@ -103,7 +103,7 @@ UnicornTranscoder Trancoder Labels
 */}}
 {{- define "unicorn-plex.transcoderSelectorLabels" -}}
 {{ include "unicorn-plex.selectorLabels" . }}
-unicorn-trancoder: transcoder
+unicorn-transcoder: transcoder
 {{- end -}}
 
 {{/*
@@ -111,7 +111,7 @@ UnicornTranscoder Trancoder Labels
 */}}
 {{- define "unicorn-plex.transcoderControllerSelectorLabels" -}}
 {{ include "unicorn-plex.selectorLabels" . }}
-unicorn-trancoder: transcoder-controller
+unicorn-transcoder: transcoder-controller
 {{- end -}}
 
 {{- define "helm-toolkit.utils.joinListWithComma" -}}

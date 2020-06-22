@@ -41,15 +41,15 @@ spec:
           {{- else }}
             claimName: {{ include "unicorn-plex.fullname" . }}-db-backup
           {{- end }}
-      {{- if .Values.ingress.tls.secretName }}
+      {{- if .Values.ingress.tls.secret.enabled }}
         - name: plex-tls
           secret:
-            secretName: {{ .Values.ingress.tls.secretName }}
+            secretName: {{ .Values.ingress.tls.secret.name }}
       {{- end }}
       initContainers:
         - name: plex-init
           image: "{{ .Values.plex.repository }}:{{ .Values.plex.tag }}"
-          imagePullPolicy: {{ .Values.plex.pullPolicy | quote }}
+          imagePullPolicy: {{ .Values.plex.pullPolicy }}
           env:
             {{- if .Values.plexUID }}
             - name: PLEX_UID
@@ -68,26 +68,23 @@ spec:
               mountPath: "/plex-bin"
             - name: "plex-config"
               mountPath: "/plex-config"
+              {{- if .Values.data.plexConfig.subPath }}
+              subPath: {{ .Values.data.plexConfig.subPath }}
+              {{- end }}
             - name: "plex-db-backup"
               mountPath: "/db-backup"
+              {{- if .Values.data.plexDB.subPath }}
+              subPath: {{ .Values.data.plexDB.subPath }}
+              {{- end }}
             - name: "plex-db"
               mountPath: "/db-storage"
-          {{- if .Values.ingress.tls.secretName }}
+          {{- if .Values.ingress.tls.secret.enabled }}
             - name: "plex-tls"
               mountPath: "/plex-tls"
           {{- end }}
           command: ['bash', '-c', 'cp -r /usr/lib/plexmediaserver/* /plex-bin; cp -r /db-backup/* /db-storage; chown ${PLEX_UID}:${PLEX_GID} /db-storage/*; {{- if .Values.ingress.tls.secretName }}openssl pkcs12 -export -out /plex-config/{{ .Values.ingress.tls.secretName }}.pfx -inkey /plex-tls/tls.key -in /plex-tls/tls.crt -passout pass: ;{{- end }} exit $?']
-      # hostAliases:
-      #   - ip: "$(POD_IP)"
-      #     hostnames:
-      #       - {{ .Values.ingress.host }}
-      hostNetwork: true
       containers:
         - name: pms
-        {{- if .Values.securityContext }}
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-        {{- end }}
           image: "{{ .Values.plex.repository }}:{{ .Values.plex.tag }}"
           imagePullPolicy: {{ .Values.plex.pullPolicy | quote }}
           env:
@@ -123,6 +120,9 @@ spec:
               mountPath: /usr/lib/plexmediaserver
             - name: plex-config
               mountPath: /config
+              {{- if .Values.data.plexConfig.subPath }}
+              subPath: {{ .Values.data.plexConfig.subPath }}
+              {{- end }}
             - name: plex-data
               mountPath: /data
             - name: plex-db
@@ -185,6 +185,9 @@ spec:
               mountPath: /config/Library/Application Support/Plex Media Server/Plug-in Support/Databases
             - name: plex-db-backup
               mountPath: /db-backup
+              {{- if .Values.data.plexDB.subPath }}
+              subPath: {{ .Values.data.plexDB.subPath }}
+              {{- end }}
         - name: unicorn-loadbalancer
           image: "{{ .Values.unicornLoadbalancer.repository }}:{{ .Values.unicornLoadbalancer.tag }}"
           imagePullPolicy: {{ .Values.unicornLoadbalancer.pullPolicy | quote }}
@@ -216,6 +219,9 @@ spec:
               mountPath: /usr/lib/plexmediaserver
             - name: plex-config
               mountPath: /config
+              {{- if .Values.data.plexConfig.subPath }}
+              subPath: {{ .Values.data.plexConfig.subPath }}
+              {{- end }}
             - name: plex-data
               mountPath: /data
           ports:
