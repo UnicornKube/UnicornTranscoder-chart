@@ -121,7 +121,7 @@ data:
     # data.plexMedia.subPath -- The subpath on the PVC where the media is stored
     # subPath:
 
-  transcoding:
+  transcode:
     # data.transcoding.claimName -- Name of already existing PVC to be used by the transcoders to use while transcoding media
     # If claimName is defined then the storage class and size are ignored
     # Claim must be fore a ReadWriteMany PVC
