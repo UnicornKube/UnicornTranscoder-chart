@@ -38,8 +38,8 @@ spec:
         {{- end }}
         - name: plex-transcode
           persistentVolumeClaim:
-        {{- if .Values.data.transcoding.claimName }}
-            claimName: {{ .Values.data.transcoding.claimName }}
+        {{- if .Values.data.transcode.claimName }}
+            claimName: {{ .Values.data.transcode.claimName }}
         {{- else }}
             claimName: {{ include "unicorn-plex.fullname" . }}-transcode
         {{- end }}
@@ -78,8 +78,8 @@ spec:
           volumeMounts:
             - name: plex-transcode
               mountPath: /opt/UnicornTranscoder/cache
-              {{- if .Values.data.transcoding.subPath }}
-              subPath: {{ .Values.data.transcoding.subPath }}
+              {{- if .Values.data.transcode.subPath }}
+              subPath: {{ .Values.data.transcode.subPath }}
               {{- end }}
             - name: plex-data
               mountPath: /data
