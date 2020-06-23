@@ -53,7 +53,7 @@ spec:
 {{- end }}
 ---
 {{- end }}
-{{- if not (.Values.data.transcoding.claimName) }}
+{{- if not (.Values.data.transcode.claimName) }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -65,9 +65,9 @@ spec:
     - "ReadWriteMany"
   resources:
     requests:
-      storage: {{ .Values.data.transcoding.size | quote }}
-{{- if .Values.data.transcoding.storageClass }}
-  storageClassName: {{ .Values.data.transcoding.storageClass | quote }}
+      storage: {{ .Values.data.transcode.size | quote }}
+{{- if .Values.data.transcode.storageClass }}
+  storageClassName: {{ .Values.data.transcode.storageClass | quote }}
 {{- end }}
 ---
 {{- end }}
