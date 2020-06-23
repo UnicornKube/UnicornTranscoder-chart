@@ -57,7 +57,7 @@ spec:
             - name: SERVER_PORT
               value: "3000"
             - name: SERVER_HOST
-              value: "$(POD_NAME).{{ $fullname }}-transcoder.default.svc.cluster.local"
+              value: "http://$(POD_NAME).{{ $fullname }}-transcoder.default.svc.cluster.local"
             - name: LOADBALANCER_ADDRESS
               value: {{ include "unicorn-plex.lb-url" . | trimSuffix "/" | quote }}
             - name: INSTANCE_ADDRESS
