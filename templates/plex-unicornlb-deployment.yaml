@@ -41,13 +41,6 @@ spec:
           {{- else }}
             claimName: {{ include "unicorn-plex.fullname" . }}-db-backup
           {{- end }}
-        - name: plex-transcode
-          persistentVolumeClaim:
-          {{- if .Values.data.transcode.claimName }}
-            claimName: {{ .Values.data.transcode.claimName }}
-          {{- else }}
-            claimName: {{ include "unicorn-plex.fullname" . }}-transcode
-          {{- end }}
       {{- if .Values.ingress.tls.secret.enabled }}
         - name: plex-tls
           secret:
@@ -137,11 +130,6 @@ spec:
               {{- end }}
             - name: plex-db
               mountPath: /config/Library/Application Support/Plex Media Server/Plug-in Support/Databases
-            - name: plex-transcode
-              mountPath: /transcode
-              {{- if .Values.data.transcode.subPath }}
-              subPath: {{ .Values.data.transcode.subPath }}
-              {{- end }}
           ports:
             - name: plex-web
               containerPort: 32400
@@ -239,11 +227,6 @@ spec:
               {{- end }}
             - name: plex-data
               mountPath: /data
-            - name: plex-transcode
-              mountPath: /transcode
-              {{- if .Values.data.transcode.subPath }}
-              subPath: {{ .Values.data.transcode.subPath }}
-              {{- end }}
 
           ports:
             - name: lb-port
