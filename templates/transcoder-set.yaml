@@ -68,7 +68,7 @@ spec:
                   name: {{ include "unicorn-plex.fullname" . }}-x-plex-token
                   key: X-Plex-Token
             - name: DEBUG
-              value: "Unicorn*"
+              value: "*"
             - name: TRANSCODER_DEBUG
               value: "true"
           ports:
