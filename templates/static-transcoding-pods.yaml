@@ -1,15 +1,15 @@
 {{- if not .Values.transcoding.hpa.enabled }}
 {{- range $i, $e := until ( .Values.transcoding.replicas | int ) -}}
 {{- with $ -}}
+{{ $indexname :=  printf "%s-transcoder-%d" (include "unicorn-plex.name" .) $i }}
 ---
 apiVersion: v1
 kind: pod
 metadata:
-  name: {{ include "unicorn-plex.name" . }}-transcoder-{{ $i | toString }}
+  name: {{ $indexname }}
   labels:
     {{- include "unicorn-plex.labels" . | nindent 4 }}
     transcoder-index: {{ $i | quote }}
-  annotations
 spec:
 {{- with .Values.imagePullSecrets }}
   imagePullSecrets:
@@ -105,7 +105,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "unicorn-plex.name" . }}-transcoder-{{ $i | toString }}
+  name: {{ $indexname }}
   labels:
     {{- include "unicorn-plex.labels" . | nindent 4 }}
   {{- with .Values.service.annotations }}
@@ -132,7 +132,7 @@ apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
-  name: {{ include "unicorn-plex.name" . }}-transcoder-{{ $i | toString }}
+  name: {{ $indexname }}
   labels:
     {{- include "unicorn-plex.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
@@ -143,13 +143,13 @@ spec:
   {{- if .Values.ingress.tls }}
   tls:
     - hosts:
-        - {{ include "unicorn-plex.name" . }}-transcoder-{{ $i | toString }}.{{ .Values.transcoding.domain }}
+        - {{ $indexname }}.{{ .Values.transcoding.domain }}
       {{ if .Values.ingress.tls.secret.enabled -}}
       secretName: {{ .Values.ingress.tls.secret.name }}
       {{- end }}
   {{- end }}
   rules:
-    - host: {{ include "unicorn-plex.name" . }}-transcoder-{{ $i | toString }}.{{ .Values.transcoding.domain }}
+    - host: {{ $indexname }}.{{ .Values.transcoding.domain }}
       http:
         paths:
           - path: /
