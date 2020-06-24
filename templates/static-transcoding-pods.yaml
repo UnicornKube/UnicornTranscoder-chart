@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: pod
 metadata:
-  name: {{ include "unicorn-plex.name" . }}-transcoder-{{ $i | string }}
+  name: {{ include "unicorn-plex.name" . }}-transcoder-{{ $i | toString }}
   labels:
     {{- include "unicorn-plex.labels" . | nindent 4 }}
     transcoder-index: {{ $i | quote }}
@@ -101,7 +101,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "unicorn-plex.name" . }}-transcoder-{{ $i | string }}
+  name: {{ include "unicorn-plex.name" . }}-transcoder-{{ $i | toString }}
   labels:
     {{- include "unicorn-plex.labels" . | nindent 4 }}
   {{- with .Values.service.annotations }}
@@ -128,7 +128,7 @@ apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
-  name: {{ include "unicorn-plex.name" . }}-transcoder-{{ $i | string }}
+  name: {{ include "unicorn-plex.name" . }}-transcoder-{{ $i | toString }}
   labels:
     {{- include "unicorn-plex.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
@@ -149,7 +149,7 @@ spec:
         paths:
           - path: /
             backend:
-              serviceName: {{ include "unicorn-plex.name" . }}-transcoder-{{ $i | string }}
+              serviceName: {{ include "unicorn-plex.name" . }}-transcoder-{{ $i | toString }}
               servicePort: transcode-port
 {{- end }}
 {{- end }}
