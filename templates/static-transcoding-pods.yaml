@@ -1,5 +1,5 @@
 {{- if not .Values.transcoding.hpa.enabled }}
-{{- $scheme := include "transcoding.scheme" . -}}
+{{- $scheme := include "transcoder.scheme" . -}}
 {{- range $i, $e := until .Values.transcoding.replicas }}
 apiVersion: apps/v1
 kind: pod
