@@ -49,14 +49,10 @@ spec:
           image: "{{ .Values.unicornTranscoder.repository}}:{{ .Values.unicornTranscoder.tag }}"
           imagePullPolicy: {{ .Values.unicornTranscoder.pullPolicy }}
           env:
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
             - name: SERVER_PORT
               value: "3000"
             - name: SERVER_HOST
-              value: "$(POD_NAME).{{ .Values.transcoding.domain }}"
+              value: "{{ $indexname }}.{{ .Values.transcoding.domain }}"
             - name: LOADBALANCER_ADDRESS
               value: {{ include "unicorn-plex.lb-url" . | trimSuffix "/" | quote }}
             - name: INSTANCE_ADDRESS
