@@ -4,7 +4,7 @@
 {{ $indexname :=  printf "%s-transcoder-%d" (include "unicorn-plex.name" .) $i }}
 ---
 apiVersion: v1
-kind: pod
+kind: Pod
 metadata:
   name: {{ $indexname }}
   labels:
