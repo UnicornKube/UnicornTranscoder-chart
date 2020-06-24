@@ -1,11 +1,12 @@
 {{- if not .Values.transcoding.hpa.enabled }}
-{{- range $i, $e := until ( .Values.transcoding.replicas | int )}}
+{{- range $i, $e := until ( .Values.transcoding.replicas | int ) -}}
+{{- with $ -}}
 apiVersion: apps/v1
 kind: pod
 metadata:
-  name: {{ include "unicorn-plex.name" . }}-transcoder-{{ $i | toString }}
+  name: {{ include "unicorn-plex.name" }}-transcoder-{{ $i | toString }}
   labels:
-    {{- include "unicorn-plex.labels" . | nindent 4 }}
+    {{- include "unicorn-plex.labels" | nindent 4 }}
     transcoder-index: {{ $i | quote }}
 spec:
 {{- with .Values.imagePullSecrets }}
@@ -152,6 +153,7 @@ spec:
               serviceName: {{ include "unicorn-plex.name" . }}-transcoder-{{ $i | toString }}
               servicePort: transcode-port
 {{- end }}
-{{- end }}
-{{- end }}
-{{- end }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
