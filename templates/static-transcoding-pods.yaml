@@ -1,6 +1,6 @@
 {{- if not .Values.transcoding.hpa.enabled }}
 {{- $scheme := include "transcoding.scheme" . -}}
-{{- range $i, _ := until .Values.transcoding.replicas }}
+{{- range $i, $e := until .Values.transcoding.replicas }}
 apiVersion: apps/v1
 kind: pod
 metadata:
