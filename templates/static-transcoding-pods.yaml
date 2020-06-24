@@ -2,7 +2,7 @@
 {{- range $i, $e := until ( .Values.transcoding.replicas | int ) -}}
 {{- with $ -}}
 ---
-apiVersion: apps/v1
+apiVersion: v1
 kind: pod
 metadata:
   name: {{ include "unicorn-plex.name" . }}-transcoder-{{ $i | toString }}
