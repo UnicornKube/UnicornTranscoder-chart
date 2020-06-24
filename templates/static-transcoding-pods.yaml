@@ -1,0 +1,158 @@
+{{- if not .Values.transcoding.hpa.enabled }}
+{{- $scheme := include "transcoding.scheme" . -}}
+{{- range $i, _ := until .Values.transcoding.replicas }}
+apiVersion: apps/v1
+kind: pod
+metadata:
+  name: {{ include "unicorn-plex.name" . }}-transcoder-{{ $i }}
+  labels:
+    {{- include "unicorn-plex.labels" . | nindent 4 }}
+    transcoder-index: {{ $i | quote }}
+spec:
+{{- with .Values.imagePullSecrets }}
+  imagePullSecrets:
+    {{- toYaml . | nindent 8 }}
+{{- end }}
+  securityContext:
+    {{- toYaml .Values.podSecurityContext | nindent 8 }}
+  volumes:
+    - name: plex-data
+      persistentVolumeClaim:
+    {{- if .Values.data.plexMedia.claimName }}
+        claimName: {{ .Values.data.plexMedia.claimName }}
+    {{- else }}
+        claimName: {{ include "unicorn-plex.fullname" . }}-data
+    {{- end }}
+    - name: plex-transcode
+      persistentVolumeClaim:
+    {{- if .Values.data.transcode.claimName }}
+        claimName: {{ .Values.data.transcode.claimName }}
+    {{- else }}
+        claimName: {{ include "unicorn-plex.fullname" . }}-transcode
+    {{- end }}
+  containers:
+    - name: unicorn-transcoder
+      securityContext:
+        {{- toYaml .Values.securityContext | nindent 12 }}
+      image: "{{ .Values.unicornTranscoder.repository}}:{{ .Values.unicornTranscoder.tag }}"
+      imagePullPolicy: {{ .Values.unicornTranscoder.pullPolicy }}
+      env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: SERVER_PORT
+          value: "3000"
+        - name: SERVER_HOST
+          value: "$(POD_NAME).{{ .Values.transcoding.domain }}"
+        - name: LOADBALANCER_ADDRESS
+          value: {{ include "unicorn-plex.lb-url" . | trimSuffix "/" | quote }}
+        - name: INSTANCE_ADDRESS
+          value: "{{ $scheme }}://$(SERVER_HOST):{{ .Values.transcoding.port }}"
+        - name:  PLEX_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "unicorn-plex.fullname" . }}-x-plex-token
+              key: X-Plex-Token
+        - name: DEBUG
+          value: "*"
+        - name: TRANSCODER_DEBUG
+          value: "true"
+      ports:
+        - name: transcode
+          containerPort: 3000
+          protocol: TCP
+      volumeMounts:
+        - name: plex-transcode
+          mountPath: /opt/UnicornTranscoder/cache
+          {{- if .Values.data.transcode.subPath }}
+          subPath: {{ .Values.data.transcode.subPath }}
+          {{- end }}
+        - name: plex-data
+          mountPath: /data
+          {{- if .Values.data.plexMedia.subPath }}
+          subPath: {{ .Values.data.plexMedia.subPath }}
+          {{- end }}
+      # livenessProbe:
+      #   httpGet:
+      #     path: /api/sessions
+      #     port: transcode
+      #   initialDelaySeconds: 10
+      #   timeoutSeconds: 10
+      # readinessProbe:
+      #   httpGet:
+      #     path: /api/sessions
+      #     port: transcode
+      #   initialDelaySeconds: 10
+      #   timeoutSeconds: 10
+      resources:
+        {{- toYaml .Values.resources.unicornTranscoder | nindent 12 }}
+  {{- with .Values.nodeSelector.unicornTranscoder }}
+  nodeSelector:
+    {{- toYaml . | nindent 8 }}
+  {{- end }}
+{{- with .Values.affinity.unicornTranscoder }}
+  affinity:
+    {{- toYaml . | nindent 8 }}
+{{- end }}
+{{- with .Values.tolerations.unicornTranscoder }}
+  tolerations:
+    {{- toYaml . | nindent 8 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "unicorn-plex.name" . }}-transcoder-{{ $i }}
+  labels:
+    {{- include "unicorn-plex.labels" . | nindent 4 }}
+  {{- with .Values.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - name: transcode-port
+      port: 3000
+      targetPort: transcode
+      protocol: TCP
+  selector:
+    unicorn-transcoder: transcoder
+    transcoder-index: {{ $i | quote }}
+---
+{{- if .Values.ingress.enabled -}}
+{{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1beta1
+{{- else -}}
+apiVersion: extensions/v1beta1
+{{- end }}
+kind: Ingress
+metadata:
+  name: {{ include "unicorn-plex.name" . }}-transcoder-{{ $i }}
+  labels:
+    {{- include "unicorn-plex.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.ingress.tls }}
+  tls:
+    - host: "$(POD_NAME).{{ .Values.transcoding.domain }}"
+      {{- if .Values.ingress.tls.secret.enabled -}}
+      secretName: {{ .Values.ingress.tls.secret.name }}
+      {{- end }}
+  {{- end }}
+  rules:
+    - host: "$(POD_NAME).{{ .Values.transcoding.domain }}"
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: {{ include "unicorn-plex.name" . }}-transcoder-{{ $i }}
+              servicePort: transcode-port
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
