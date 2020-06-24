@@ -128,3 +128,11 @@ unicorn-transcoder: transcoder-controller
 {{- $advertiseIPs := ( join "," .Values.plexAdvertiseIPs ) -}}
 {{- printf ( join "," ( without ( list $lbIP $advertiseIPs  ) "" ) | quote ) -}}
 {{- end -}}
+
+{{- define "transcoder.scheme" -}}
+{{- if eq .Values.transcoding.port 443 -}}
+https
+{{- else -}}
+http
+{{- end -}}
+{{- end -}}

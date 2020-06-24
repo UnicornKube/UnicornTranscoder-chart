@@ -71,11 +71,11 @@ transcoding:
     maxReplicas: 16
   # transcoding.replicas -- (int) Number of replicas to be created by the Transcoder StatefulSet
   replicas: 2
-  # transcoding.port -- (int) Port to be used by the created transcoding services
+  # transcoding.port -- (int) Port to be exposed by the created transcoding services
   port: 443
   # transcode.transcodeDomain -- Domain to be used as the base for the FQDN of the transcoders
   # EX: unicorn-transcoder-0.plex.mydomain.tld
-  transcodeDomain: plex.mydomain.tld
+  domain: plex.mydomain.tld
 
 data:
   # Plex Configuration

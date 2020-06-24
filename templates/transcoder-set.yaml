@@ -1,4 +1,26 @@
+{{- if .Values.transcoding.hpa.enabled }}
 {{- $fullname := include "unicorn-plex.fullname" . -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "unicorn-plex.fullname" . }}-transcoder
+  labels:
+    {{- include "unicorn-plex.labels" . | nindent 4 }}
+  {{- with .Values.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - name: transcode-port
+      port: 3000
+      targetPort: transcode
+      protocol: TCP
+  selector:
+    unicorn-transcoder: transcoder
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -112,3 +134,4 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
+{{- end }}
