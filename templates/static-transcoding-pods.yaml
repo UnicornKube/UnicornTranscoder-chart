@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: pod
 metadata:
-  name: {{ include "unicorn-plex.name" . }}-transcoder-{{ $i }}
+  name: {{ include "unicorn-plex.name" . }}-transcoder-{{ $i | string }}
   labels:
     {{- include "unicorn-plex.labels" . | nindent 4 }}
     transcoder-index: {{ $i | quote }}
@@ -47,7 +47,7 @@ spec:
         - name: LOADBALANCER_ADDRESS
           value: {{ include "unicorn-plex.lb-url" . | trimSuffix "/" | quote }}
         - name: INSTANCE_ADDRESS
-          value: {{ include "unicorn-plex.transcoder-url" }}
+          value: {{ include "unicorn-plex.transcoder-url" . }}
         - name:  PLEX_TOKEN
           valueFrom:
             secretKeyRef:
@@ -101,7 +101,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "unicorn-plex.name" . }}-transcoder-{{ $i }}
+  name: {{ include "unicorn-plex.name" . }}-transcoder-{{ $i | string }}
   labels:
     {{- include "unicorn-plex.labels" . | nindent 4 }}
   {{- with .Values.service.annotations }}
@@ -128,7 +128,7 @@ apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
-  name: {{ include "unicorn-plex.name" . }}-transcoder-{{ $i }}
+  name: {{ include "unicorn-plex.name" . }}-transcoder-{{ $i | string }}
   labels:
     {{- include "unicorn-plex.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
@@ -149,7 +149,7 @@ spec:
         paths:
           - path: /
             backend:
-              serviceName: {{ include "unicorn-plex.name" . }}-transcoder-{{ $i }}
+              serviceName: {{ include "unicorn-plex.name" . }}-transcoder-{{ $i | string }}
               servicePort: transcode-port
 {{- end }}
 {{- end }}
