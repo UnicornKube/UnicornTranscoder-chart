@@ -77,15 +77,15 @@ Create the name of the service account to use
 {{- define "unicorn-plex.transcoder-url" -}}
 {{- if .Values.ingress.tls.host -}}
 {{- if eq ( .Values.transcoding.port | int64 ) 443 -}}
-{{- printf "https://$(SERVER_HOST).%s" .Values.transcoding.transcodeDomain -}}
+{{- printf "https://$(SERVER_HOST)" -}}
 {{- else -}}
-{{- printf "https://$(SERVER_HOST).%s:%s" .Values.transcoding.transcodeDomain ( .Values.transcoding.port | toString ) -}}
+{{- printf "https://$(SERVER_HOST):%s" ( .Values.transcoding.port | toString ) -}}
 {{- end -}}
 {{- else -}}
 {{- if eq ( .Values.transcoding.port | int64 ) 80 -}}
-{{- printf "http://$(SERVER_HOST).%s" .Values.transcoding.transcodeDomain -}}
+{{- printf "http://$(SERVER_HOST)" -}}
 {{- else -}}
-{{- printf "http://$(SERVER_HOST).%s:%s" .Values.transcoding.transcodeDomain ( .Values.transcoding.port | toString ) -}}
+{{- printf "http://$(SERVER_HOST):%s" ( .Values.transcoding.port | toString ) -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}
@@ -99,7 +99,7 @@ unicorn-transcoder: loadbalancer
 {{- end -}}
 
 {{/*
-UnicornTranscoder Trancoder Labels
+UnicornTranscoder Transcoder Labels
 */}}
 {{- define "unicorn-plex.transcoderSelectorLabels" -}}
 {{ include "unicorn-plex.selectorLabels" . }}
@@ -107,7 +107,7 @@ unicorn-transcoder: transcoder
 {{- end -}}
 
 {{/*
-UnicornTranscoder Trancoder Labels
+UnicornTranscoder Transcoder Labels
 */}}
 {{- define "unicorn-plex.transcoderControllerSelectorLabels" -}}
 {{ include "unicorn-plex.selectorLabels" . }}
@@ -127,12 +127,4 @@ unicorn-transcoder: transcoder-controller
 {{- end -}}
 {{- $advertiseIPs := ( join "," .Values.plexAdvertiseIPs ) -}}
 {{- printf ( join "," ( without ( list $lbIP $advertiseIPs  ) "" ) | quote ) -}}
-{{- end -}}
-
-{{- define "transcoder.scheme" -}}
-{{- if eq .Values.transcoding.port 443 -}}
-https
-{{- else -}}
-http
-{{- end -}}
 {{- end -}}

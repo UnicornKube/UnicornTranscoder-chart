@@ -1,5 +1,4 @@
 {{- if not .Values.transcoding.hpa.enabled }}
-{{- $scheme := include "transcoder.scheme" . -}}
 {{- range $i, $e := until .Values.transcoding.replicas }}
 apiVersion: apps/v1
 kind: pod
@@ -48,7 +47,7 @@ spec:
         - name: LOADBALANCER_ADDRESS
           value: {{ include "unicorn-plex.lb-url" . | trimSuffix "/" | quote }}
         - name: INSTANCE_ADDRESS
-          value: "{{ $scheme }}://$(SERVER_HOST):{{ .Values.transcoding.port }}"
+          value: {{ include "unicorn-plex.transcoder-url" }}
         - name:  PLEX_TOKEN
           valueFrom:
             secretKeyRef:
