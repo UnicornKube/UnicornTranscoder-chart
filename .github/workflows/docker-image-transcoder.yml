@@ -1,4 +1,4 @@
-name: Create and publish SQLlite Streamer Docker image
+name: Create and publish Transcoder Docker image
 
 on:
   workflow_dispatch: {}
