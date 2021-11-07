@@ -1,4 +1,4 @@
-name: Create and publish Controller Docker image
+name: Create and publish SQLlite Streamer Docker image
 
 on:
   workflow_dispatch: {}
