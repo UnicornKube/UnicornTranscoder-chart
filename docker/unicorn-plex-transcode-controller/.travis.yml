@@ -1,0 +1,10 @@
+language: minimal
+
+services:
+  - docker
+
+script: make build
+
+after_success:
+  - docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASSWORD
+  - make release
